@@ -13,7 +13,14 @@ function! ale_linters#ada#adals#GetAdaLSConfig(buffer) abort
 endfunction
 
 function! ale_linters#ada#adals#GetRootDirectory(buffer) abort
-    return fnamemodify(bufname(a:buffer), ':p:h')
+    " Try to find nearest alire project root
+    let l:project_root = ale#path#FindNearestDirectory(a:buffer, 'alire')
+
+    if empty(l:project_root)
+        return fnamemodify(bufname(a:buffer), ':p:h')
+    else
+        return fnamemodify(l:project_root, ':h:h')
+    endif
 endfunction
 
 call ale#linter#Define('ada', {
